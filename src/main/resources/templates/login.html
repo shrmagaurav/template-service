@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        .signup-link {
+            margin-top: 10px;
+            display: inline-block;
+            color: #007bff;
+            cursor: pointer;
+        }
+        .signup-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Login</h2>
+    <form onsubmit="login(event)">
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    <p id="error" class="error"></p>
+    <p class="signup-link" onclick="showSignup()">New User? Sign Up</p>
+</div>
+
+<script>
+    function login(event) {
+        event.preventDefault();
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+
+        fetch("http://localhost:8082/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+            credentials: "include"  // ✅ Required for cookies
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Invalid credentials");
+            return response.json();
+        })
+        .then(data => {
+            console.log("Login Success:", data);
+            window.location.href = "/home"; // ✅ Redirect after login
+        })
+        .catch(error => {
+            console.error("Login Failed:", error);
+            document.getElementById("error").innerText = "Invalid username or password!";
+        });
+    }
+
+    function showSignup() {
+        window.location.href = "/signup";
+    }
+</script>
+
+</body>
+</html>
